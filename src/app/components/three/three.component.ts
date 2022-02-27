@@ -66,7 +66,7 @@ export class ThreeComponent implements AfterViewInit, OnDestroy {
   public onResize(event: Event) {
     this.scene.onResize(this.getAspectRatio(),
                         window.innerWidth,
-                        window.innerHeight - 120);
+                        window.innerHeight);
   }
 
   private getAspectRatio(): number {

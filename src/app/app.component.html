@@ -1,10 +1,10 @@
-<app-three></app-three>
-
-<div cdkDrag [cdkDragFreeDragPosition]="dragPosition" class="contents-dailog" id="contents-dialog-id">
-    <!-- ドラッグハンドルをテーブルの後ろに敷いて、テーブル領域以外がドラッグされたらcontetns-dialogを移動するイメージ -->
-    <div class="dialog-header">
-        <div cdkDragHandle class="dialog-drag-handle"></div>
-    </div>
+<div id="editor" class=" ace_editor ace-chrome" draggable="false">
     <app-code-editor></app-code-editor>
-    <router-outlet></router-outlet>
 </div>
+<div id="viewerContext">
+    <div class="viewer">
+        <app-three></app-three>
+    </div>
+</div>
+
+
