@@ -31,11 +31,11 @@ export class CodeEditorComponent implements OnInit {
   public out: string = "";
 
   ngOnInit(){
-    this.obj = 'lc = 0.3;\n'
+    this.obj = 'lc = 3;\n'
     this.obj += 'Point(1) = {0.0,0.0,0.0,lc};\n'
-    this.obj += 'Point(2) = {1,0.0,0.0,lc};\n'
-    this.obj += 'Point(3) = {1,1,0.0,lc};\n'
-    this.obj += 'Point(4) = {0,1,0.0,lc};\n'
+    this.obj += 'Point(2) = {10,0.0,0.0,lc};\n'
+    this.obj += 'Point(3) = {10,10,0.0,lc};\n'
+    this.obj += 'Point(4) = {0,10,0.0,lc};\n'
     this.obj += 'Line(1) = {4,3};\n'
     this.obj += 'Line(2) = {3,2};\n'
     this.obj += 'Line(3) = {2,1};\n'
