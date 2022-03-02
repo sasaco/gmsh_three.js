@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --prod --base-href \"https://structuralengine.github.io/gmsh_three.js/\" && angular-cli-ghpages",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -22,6 +22,7 @@
     "@ctrl/ngx-codemirror": "^5.1.1",
     "@three-ts/orbit-controls": "^1.4.7",
     "@types/three": "^0.137.0",
+    "angular-cli-ghpages": "^1.0.0",
     "codemirror": "^5.65.2",
     "rxjs": "~7.5.0",
     "three": "^0.137.5",

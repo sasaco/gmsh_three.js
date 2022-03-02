@@ -65,7 +65,6 @@ export class SceneService {
     this.GridHelper.geometry.rotateX(Math.PI / 2);
     this.scene.add(this.GridHelper);                      
   }
-
   // コントロール
   public addControls() {
     const controls = new OrbitControls(this.camera, this.renderer.domElement);

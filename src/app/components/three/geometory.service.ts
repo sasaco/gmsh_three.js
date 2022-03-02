@@ -1,18 +1,25 @@
 import { Injectable } from '@angular/core';
 import * as THREE from 'three';
-import { BufferGeometry, Float32BufferAttribute } from 'three';
+import { BufferGeometry, Float32BufferAttribute, Vector3 } from 'three';
 import { SceneService } from './scene.service';
+import { ThreeComponent } from './three.component';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GeometoryService {
-  constructor(private scene: SceneService) { }
+  
+  groupe = new THREE.Object3D();
+
+  constructor(private scene: SceneService) {
+    this.scene.add( this.groupe );
+  }
 
   loadMsh(response: string) {
-
-    const mesh = this.parse(response);
-    this.scene.add( mesh );
+    this.scene.remove(this.groupe);
+    this.groupe = new THREE.Object3D();
+    this.groupe = this.parse(response);
+    this.scene.add( this.groupe);
     this.scene.render();
   }
 
@@ -20,7 +27,7 @@ export class GeometoryService {
   private parse( data: string ): THREE.Object3D {
 
     const nodes: any = {};
-    const elements: any = {};
+    const elements: any[] = new Array();
 
     const lines = data.split( '\n' );
 
@@ -59,7 +66,7 @@ export class GeometoryService {
             const x = parseFloat(n[0]);
             const y = parseFloat(n[1]);
             const z = parseFloat(n[2]);
-            nodes[key] = [ x, y, z ];
+            nodes[key] = new Vector3( x, y, z );
           }
         }
 
@@ -75,19 +82,25 @@ export class GeometoryService {
           line = lines[r].trim(); // dim, tag (surface), type, elements in block
           const eInfo = line.split( ' ' );
           const num = parseInt(eInfo[3]);
-          const points = parseInt(eInfo[2]);
+          const type = parseInt(eInfo[2]);
           // Node tag
+          const element: any = {};
           for( let j=0; j<num; j++){
             r++
             line = lines[r].trim();
             const e = line.split( ' ' );
             const key: string = e[0];
+            let points = 0;
+            if(type===4){
+              points = 4; // Tetrahedron
+            }
             const element_list = [];
             for(let k=1; k<=points; k++){
               element_list.push(e[k].trim());
             }
-            elements[key] = element_list;
+            element[key] = element_list;
           }
+          elements.push({element, type});
         }
       } else if ( line.indexOf( '$EndElements' ) === 0 ) {
         // Elements ブロックの終わり
@@ -95,41 +108,44 @@ export class GeometoryService {
 
     }
 
-
-
-
-
-    const material = new THREE.MeshLambertMaterial( { transparent: true, color: 0xff0000, opacity: 0.2 } );
-
     let groupe = new THREE.Group();
+    
+    const material = new THREE.MeshLambertMaterial({ 
+      transparent: true, 
+      color: 0xFF0000, 
+      // opacity: 0.2,
+      // side: THREE.DoubleSide, 
+      wireframe: true 
+    });
 
-    let geometry = new BufferGeometry();
-    const positions: number[] = new Array();
-    for(const key of Object.keys(elements)){
-      for(const no of elements[key]){
-        for(const n of nodes[no]){
-          positions.push(n);
+    for(const e of elements){
+      const element = e.element;
+      const type = e.type;
+
+      if(type===4){
+
+        const positions: Vector3[] = new Array();
+        let i = 0;
+        for(const key of Object.keys(element)){
+          const el = element[key];
+          // 頂点インデックスを生成
+          let index = new Uint32Array([
+            i+0, i+1, i+2,
+            i+1, i+2, i+3,
+            i+3, i+1, i+0,
+            i+0, i+3, i+2,
+          ]);
+          for(const no of el){
+            positions.push(nodes[no]);
+          }
+          const geometry = new THREE.BufferGeometry().setFromPoints( positions );
+          geometry.setIndex(new THREE.BufferAttribute(index, 1));
+          const mesh = new THREE.Mesh( geometry, material );
+          groupe.add(mesh);
+          i += 4;
         }
       }
     }
-    geometry.setAttribute( 'position', new Float32BufferAttribute( positions, 3 ) );
-    geometry.center();
-    geometry.computeVertexNormals();
-    const mesh = new THREE.Mesh( geometry, material );
-
-
-    const geometry = new THREE.BufferGeometry().setFromPoints( positions );
-    const matLine = new THREE.LineBasicMaterial({
-      color: 0xFF0000,
-      linewidth: 0.001,
-    });
-    const line = new THREE.Line(geometry, matLine);
-
-    
-
-    groupe.add(mesh);
-
-
     return groupe;
   }
 
