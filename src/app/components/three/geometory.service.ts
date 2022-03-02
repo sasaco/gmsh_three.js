@@ -95,6 +95,10 @@ export class GeometoryService {
 
     }
 
+
+
+
+
     const material = new THREE.MeshLambertMaterial( { transparent: true, color: 0xff0000, opacity: 0.2 } );
 
     let groupe = new THREE.Group();
@@ -112,6 +116,17 @@ export class GeometoryService {
     geometry.center();
     geometry.computeVertexNormals();
     const mesh = new THREE.Mesh( geometry, material );
+
+
+    const geometry = new THREE.BufferGeometry().setFromPoints( positions );
+    const matLine = new THREE.LineBasicMaterial({
+      color: 0xFF0000,
+      linewidth: 0.001,
+    });
+    const line = new THREE.Line(geometry, matLine);
+
+    
+
     groupe.add(mesh);
 
 
